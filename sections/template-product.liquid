@@ -75,12 +75,12 @@
                         === Custom Sectio ===
                          {% endcomment %}
                         {% when 'sub_description' %}
-                            
-                             <div class="my-3 p-4" style="border:1px solid #ccc; border-radius:20px;">
-                             <h3>Other Details</h3>
-                            <p>{{ block.settings.text }}</p>
-                            </div>
-
+                            {% if  block.settings.text != blank %}
+                                <div class="my-3 p-4" style="border:1px solid #ccc; border-radius:20px;">
+                                <h3>Other Details</h3>
+                                <p>{{ block.settings.text }}</p>
+                                </div>
+                            {% endif %}
 
                         {% when 'variant_selector' %}
                             <div class="my-3">
@@ -276,7 +276,7 @@ addToCartForms.forEach((form) => {
   form.addEventListener("submit", async (event) => {
     // Prevent normal submission
     event.preventDefault();
-alert();
+
     // Submit form with ajax
     await fetch("/cart/add", {
       method: "post",
