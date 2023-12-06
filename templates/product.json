@@ -9,8 +9,13 @@
                 "variant_selector":{ "type": "variant_selector"},
                 "quantity":{ "type": "quantity"},
                 "description":{ "type": "description"},
-                "checkout_buttons":{ "type": "checkout_buttons"}
-
+                "checkout_buttons":{ "type": "checkout_buttons"},
+                "sub_description": {
+                    "type": "sub_description",
+                    "settings": {
+                      "share_label": "Sub description"
+                    }
+                  }
             },
             "block_order": [
                 "vendor",
@@ -19,7 +24,8 @@
                 "variant_selector",
                 "quantity",
                 "description",
-                "checkout_buttons"
+                "checkout_buttons",
+                "sub_description"
             ]
         }
 

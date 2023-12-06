@@ -11,13 +11,21 @@
   {{ 'application.css' | asset_url | stylesheet_tag }}
   {{ 'application.js' | asset_url | script_tag }}
   <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.2/dist/alpine.min.js" defer></script>
+  {{ 'https://code.jquery.com/jquery-3.6.4.min.js' | script_tag }}
+    {{ 'theme.css' | asset_url | stylesheet_tag }}
+    
+<style>
+    [x-cloak] { display: none !important; }
+  </style>
+
 </head>
 <body>
 
   {% section 'header' %}
-
+  
   <main role="main">
     {{ content_for_layout }}
   </main>
+  
 </body>
 </html>

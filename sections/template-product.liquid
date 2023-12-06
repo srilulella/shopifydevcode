@@ -71,6 +71,17 @@
                                 {% endif %}
                             </div>
 
+                        {% comment %}
+                        === Custom Sectio ===
+                         {% endcomment %}
+                        {% when 'sub_description' %}
+                            
+                             <div class="my-3 p-4" style="border:1px solid #ccc; border-radius:20px;">
+                             <h3>Other Details</h3>
+                            <p>{{ block.settings.text }}</p>
+                            </div>
+
+
                         {% when 'variant_selector' %}
                             <div class="my-3">
                                 {% unless product.has_only_default_variant %}
@@ -78,7 +89,7 @@
                                         {% for option in product.options_with_values %}
                                             <label for="Option-{{ section.id }}-{{ forloop.index0 }}">{{ option.name }}</label>
                                             <div class="my-2">
-                                                <select 
+                                                <select id="productSelect"
                                                     name="options[{{ option.name | escape }}]" 
                                                     id="Option-{{ section.id }}-{{ forloop.index0 }}" 
                                                     class="w-full border py-3 px-3"
@@ -113,22 +124,24 @@
                             </div>
 
                         {% when 'description' %}
-                            <div class="my-3">
+                            <div class="my-3 " style="word-break:break-all">
                                 <p class="text-gray-700">{{ product.description }}</p>
                             </div>
 
                         {% when 'checkout_buttons' %}
                             <div class="my-3">
-                                <button type="submit" name="add" class="w-full px-6 py-4 bg-gray-900 text-white hover:bg-gray-700 rounded-sm my-2"
+                                <button type="submit" name="add" class="w-full px-6 py-4 bg-gray-900 text-white hover:bg-gray-700 rounded-sm my-2 add-to-cart " id="cart-{{ section.id }}"
                                     {% if selected_variant.available == false %}
                                         disabled
                                     {% endif %}
+                                    data-product-id="{{ product.id }}"
                                 >
                                     {% if selected_variant.available == false %}
                                         Sold out
                                     {% else %}
                                         Add to cart
                                     {% endif %}
+
                                 </button>
                             </div>
 
@@ -144,6 +157,18 @@
     </div>
 </div>
 
+{% comment%}
+=====
+    Below is the section for custom sections
+=====
+{% endcomment %}
+
+
+{% comment%}
+=====
+    Below is the script for product varaints
+=====
+{% endcomment %}
 <script>
     class VariantSelector extends HTMLElement {
         constructor(){
@@ -159,6 +184,7 @@
                 this.updateURL();
                 this.updateFormID();
                 this.updatePrice();
+                this.updateCart();
             }
         }
 
@@ -186,6 +212,9 @@
             );
 
             console.log(this.currentVariant);
+            
+
+            
         }
 
         updateURL() {
@@ -203,16 +232,78 @@
             .then((responseText) => {
                 const id = `price-${this.dataset.section}`;
                 const html = new DOMParser().parseFromString(responseText, 'text/html');
-
+                
                 const oldPrice = document.getElementById(id);
                 const newPrice = html.getElementById(id);
-
+                console.log(newPrice);
                 if(oldPrice && newPrice) oldPrice.innerHTML = newPrice.innerHTML;
+            });
+        }
+        updateCart() {
+            fetch(`${this.dataset.url}?variant=${this.currentVariant.id}&section_id=${this.dataset.section}`)
+            .then((response) => response.text())
+            .then((responseText) => {
+                const id = `cart-${this.dataset.section}`;
+                const html = new DOMParser().parseFromString(responseText, 'text/html');
+                
+               console.log(this.currentVariant.available); 
+                const newText = this.currentVariant.available;
+                const button = document.getElementById(id);
+                if(newText == true){
+                    button.innerHTML = "Add To Cart";
+                    button.disabled = false;
+                }
+                else{
+                    button.innerHTML = "Sold Out";
+                    button.disabled = true;
+                }
+                
             });
         }
     }
     customElements.define("variant-selector", VariantSelector);
 </script>
+
+{% comment%}
+=====
+    Below is the script for add to cart without reloading
+=====
+{% endcomment %}
+<script>
+const addToCartForms = document.querySelectorAll('form[action="/cart/add"]');
+
+addToCartForms.forEach((form) => {
+  form.addEventListener("submit", async (event) => {
+    // Prevent normal submission
+    event.preventDefault();
+alert();
+    // Submit form with ajax
+    await fetch("/cart/add", {
+      method: "post",
+      body: new FormData(form),
+    });
+
+    // Get new cart object
+    const res = await fetch("/cart.json");
+    const cart = await res.json();
+
+   
+
+    // Display message
+    const message = document.createElement("p");
+    message.classList.add("added-to-cart");
+    message.textContent = "Added to cart!";
+    form.appendChild(message);
+  });
+});
+</script>
+
+
+{% comment%}
+=====
+    Below is the script for product image slider for mobile screens
+=====
+{% endcomment %}
 <script>
     const swiper = new Swiper('.swiper', {
         direction: 'horizontal',
@@ -267,8 +358,24 @@
             "type": "checkout_buttons",
             "name": "Checkout Buttons",
             "limit": 1
+        },
+        {
+      "type": "sub_description",
+      "name": "Sub Description",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Add Sub Content"
         }
+      ]
+    }   
     ]
+
+
 }    
 
 {% endschema %}
+
+
