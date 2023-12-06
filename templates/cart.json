@@ -1,8 +1,28 @@
 {
-    "sections": {
-        "template": {
-            "type": "template-cart"
+  "sections": {
+    "template": {
+      "type": "template-cart",
+      "blocks": {
+        "be194dc7-2073-4f00-bea6-c84b4cf0e6d6": {
+          "type": "subtotal",
+          "settings": {
+          }
+        },
+        "68ab9019-6caa-42ab-8882-ffc0d202046f": {
+          "type": "update_button",
+          "settings": {
+          }
         }
-    },
-    "order": ["template"]
+      },
+      "block_order": [
+        "be194dc7-2073-4f00-bea6-c84b4cf0e6d6",
+        "68ab9019-6caa-42ab-8882-ffc0d202046f"
+      ],
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "template"
+  ]
 }
